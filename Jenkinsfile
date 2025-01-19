@@ -56,34 +56,36 @@ pipeline {
             }
         }
 
-          stage('Build Backend') {
-            steps {
-                script {
-                    // Install Python and pip if not already installed
-                    sh '''
-                    apt-get update
-                    apt-get install -y python3 python3-pip python3.11-venv
-                    '''
+         stage('Build Backend') {
+    steps {
+        script {
+            // Install Python and pip if not already installed
+            sh '''
+            apt-get update
+            apt-get install -y python3 python3-pip python3.11-venv
+            '''
 
-                    // Check if the virtual environment exists and create it if it doesn't
-                    sh '''
-                    if [ ! -d "me" ]; then
-                        python3 -m venv me
-                        echo "Virtual environment 'me' created successfully."
-                    else
-                        echo "Virtual environment 'me' already exists."
-                    fi
-                    '''
+            // Check if the virtual environment exists and create it if it doesn't
+            sh '''
+            if [ ! -d "me" ]; then
+                python3 -m venv me
+                echo "Virtual environment 'me' created successfully."
+            else
+                echo "Virtual environment 'me' already exists."
+            fi
+            '''
 
-                    // Activate the virtual environment from the correct path (Scripts/activate)
-                    sh 'bash -c "source me/Scripts/activate"'
+            // List contents of the virtual environment to check if 'python' is there
+            sh 'ls -l me/bin/'
 
-                    // Install required Python dependencies
-                    sh 'me/bin/python -m pip install --upgrade pip'
-                    sh 'me/bin/pip install -r requirements.txt'
-                }
-            }
+            // Upgrade pip in the virtual environment using python3
+            sh 'me/bin/python3 -m pip install --upgrade pip'
+
+            // Install required Python dependencies
+            sh 'me/bin/python3 -m pip install -r requirements.txt'
         }
+    }
+}
 
         stage('Run Tests') {
             steps {
