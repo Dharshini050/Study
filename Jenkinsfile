@@ -46,6 +46,11 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
+                    // Install Python and pip if not already installed
+                    sh '''
+                    apt-get update
+                    apt-get install -y python3 python3-pip
+                    '''
                     // Build the backend
                     dir('study-management') {
                         sh 'pip install -r requirements.txt'
