@@ -60,8 +60,8 @@ pipeline {
                             python3 -m venv me
                         fi
         
-                        # Activate the virtual environment
-                        source me/bin/activate
+                        # Activate the virtual environment using bash
+                        bash -c "source me/bin/activate"
         
                         # Install required Python dependencies
                         pip install --upgrade pip
