@@ -49,7 +49,7 @@ pipeline {
                     dir('study-management') {
                     // Install Python and pip if not already installed
                     sh '''
-                    call me\\Scripts\\activate
+                    source me/bin/activate
                     apt-get update
                     apt-get install -y python3 python3-pip
             
@@ -67,7 +67,7 @@ pipeline {
                     dir('study-management') {
                         //Activate the virtual environment on Windows
                         sh'''
-                        call me\\Scripts\\activate
+                        source me/bin/activate
                         pytest
                         '''
                     }
