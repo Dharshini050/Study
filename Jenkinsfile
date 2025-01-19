@@ -8,15 +8,21 @@ pipeline {
             }
         }
         stage('Build Frontend') {
-            steps {
-                script {
-                    dir('study-management-fronten') {
-                        sh 'npm install'
-                        sh 'ng build --prod'
+    steps {
+        script {
+            // Install Node.js and npm if not available
+            sh 'curl -sL https://deb.nodesource.com/setup_16.x | bash -'
+            sh 'apt-get install -y nodejs'
+
+            // Now install frontend dependencies
+            dir('frontend') {
+                sh 'npm install'
+                sh 'ng build --prod'
                     }
                 }
             }
         }
+
         stage('Build Backend') {
             steps {
                 script {
