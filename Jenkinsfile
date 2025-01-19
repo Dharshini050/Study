@@ -7,6 +7,20 @@ pipeline {
     }
 
     stages {
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install Python dependencies and virtual environment tools
+                    sh '''
+                    apt-get update
+                    apt-get install -y python3 python3-pip python3.11-venv python3-dev
+                    '''
+                }
+            }
+        }
+
+
+    stages {
         stage('Clone Repositories') {
             steps {
                 script {
