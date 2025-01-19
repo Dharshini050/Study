@@ -65,27 +65,14 @@ pipeline {
                     apt-get install -y python3 python3-pip python3.11-venv
                     '''
         
-                    // Check if the virtual environment exists and create it if it doesn't
-                    sh '''
-                    if [ ! -d "me" ]; then
-                        python3 -m venv me
-                        echo "Virtual environment 'me' created successfully."
-                    else
-                        echo "Virtual environment 'me' already exists."
-                    fi
-                    '''
+                    // Upgrade pip globally
+                    sh 'pip3 install --upgrade pip'
         
-                    // Check if the virtual environment was created correctly by listing the contents of 'me'
-                    sh 'ls -l me'
-                    
-                    // List contents of the 'me/Scripts' directory to check if it's the right structure
-                    sh 'ls -l me/Scripts/'
+                    // Install dependencies globally from requirements.txt
+                    sh 'pip3 install -r requirements.txt'
         
-                    // Activate the virtual environment and install dependencies using dot (.) instead of source
-                    sh '. me/Scripts/activate && pip install --upgrade pip'
-        
-                    // Install required Python dependencies
-                    sh '. me/Scripts/activate && pip install -r requirements.txt'
+                    // Verify that the required packages are installed
+                    sh 'pip3 freeze'
                 }
             }
         }
