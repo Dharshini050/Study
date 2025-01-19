@@ -81,13 +81,15 @@ pipeline {
                     // List contents of the 'me/Scripts' directory to check if it's the right structure
                     sh 'ls -l me/Scripts/'
         
-                    // Activate the virtual environment and install dependencies
-                    sh 'source me/Scripts/activate && pip install --upgrade pip'
+                    // Activate the virtual environment and install dependencies using dot (.) instead of source
+                    sh '. me/Scripts/activate && pip install --upgrade pip'
         
                     // Install required Python dependencies
-                    sh 'source me/Scripts/activate && pip install -r requirements.txt'
+                    sh '. me/Scripts/activate && pip install -r requirements.txt'
                 }
             }
+        }
+
         }
 
 
