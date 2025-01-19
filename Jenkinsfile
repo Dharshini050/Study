@@ -20,7 +20,6 @@ pipeline {
         }
 
 
-    stages {
         stage('Clone Repositories') {
             steps {
                 script {
