@@ -52,9 +52,7 @@ pipeline {
                     call me\\Scripts\\activate
                     apt-get update
                     apt-get install -y python3 python3-pip
-                    
-                    // Build the backend
-
+            
                     pip install --upgrade pip
                     pip install -r requirements.txt
                     '''
@@ -67,7 +65,11 @@ pipeline {
             steps {
                 script {
                     dir('study-management') {
-                        sh 'pytest'
+                        //Activate the virtual environment on Windows
+                        sh'''
+                        call me\\Scripts\\activate
+                        pytest
+                        '''
                     }
                 }
             }
