@@ -63,7 +63,7 @@ pipeline {
                     '''
 
                     // Activate the virtual environment from the correct path (Scripts/activate)
-                    sh 'source me/Scripts/activate'
+                    sh 'bash -c "source me/Scripts/activate"'
 
                     // Install required Python dependencies
                     sh 'pip install --upgrade pip'
