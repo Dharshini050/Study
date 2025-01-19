@@ -61,7 +61,7 @@ pipeline {
                         fi
         
                         # Activate the virtual environment using bash
-                        bash -c "source me/bin/activate"
+                        bash -c "source bin/activate"
         
                         # Install required Python dependencies
                         pip install --upgrade pip
@@ -80,7 +80,7 @@ pipeline {
                     // Run tests in the backend directory
                     dir('study-management') {
                         sh '''
-                        . me/bin/activate
+                        bin/activate
                         pytest
                         '''
                     }
