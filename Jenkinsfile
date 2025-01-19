@@ -37,7 +37,7 @@ pipeline {
                         sh 'npm install'
 
                         // Build the frontend
-                        sh 'ng build --prod'
+                        sh 'ng build --configuration production'
                     }
                 }
             }
