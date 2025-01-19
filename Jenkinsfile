@@ -1,27 +1,43 @@
 pipeline {
     agent any
 
+    environment {
+        FRONTEND_REPO = 'https://github.com/Dharshini050/Frontend'  // Replace with your frontend repo URL
+        BACKEND_REPO = 'https://github.com/Dharshini050/Study'  // Replace with your backend repo URL
+    }
+
     stages {
-        stage('Clone Repository') {
+        stage('Clone Repositories') {
             steps {
-                git 'https://github.com/Dharshini050/Study.git'
+                script {
+                    // Clone the backend repository
+                    git url: BACKEND_REPO, branch: 'master'
+
+                    // Clone the frontend repository
+                    dir('frontend') {
+                        git url: FRONTEND_REPO, branch: 'master'
+                    }
+                }
             }
         }
-        
+
         stage('Build Frontend') {
             steps {
                 script {
-                    // Install Node.js 18.x (since Angular requires Node.js >=18)
-                    sh 'curl -sL https://deb.nodesource.com/setup_18.x | bash -'
-                    sh 'apt-get install -y nodejs'
-
-                    // Install Angular CLI globally
-                    sh 'npm install -g @angular/cli'
-
-                    // Install frontend dependencies and build the frontend
+                    // Navigate to the frontend directory and build
                     dir('frontend') {
+                        // Install Node.js if needed
+                        sh 'curl -sL https://deb.nodesource.com/setup_18.x | bash -'
+                        sh 'apt-get install -y nodejs'
+
+                        // Install Angular CLI globally
+                        sh 'npm install -g @angular/cli'
+
+                        // Install frontend dependencies
                         sh 'npm install'
-                        sh 'ng build --prod'  // Build the frontend using Angular CLI
+
+                        // Build the frontend
+                        sh 'ng build --prod'
                     }
                 }
             }
@@ -30,19 +46,18 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
+                    // Build the backend
                     dir('study-management') {
-                        // Install Python dependencies for the backend
                         sh 'pip install -r requirements.txt'
                     }
                 }
             }
         }
-        
+
         stage('Run Tests') {
             steps {
                 script {
                     dir('study-management') {
-                        // Run tests using pytest
                         sh 'pytest'
                     }
                 }
@@ -54,7 +69,7 @@ pipeline {
                 script {
                     // Example: Deploy your Dockerized application
                     echo 'Deploying the app'
-                    // Add your deployment steps here, e.g., using Docker, Kubernetes, etc.
+                    // Add deployment steps here
                 }
             }
         }
