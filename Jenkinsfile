@@ -79,8 +79,8 @@ pipeline {
                     sh 'bash -c "source me/Scripts/activate"'
 
                     // Install required Python dependencies
-                    sh 'pip install --upgrade pip'
-                    sh 'pip install -r requirements.txt'
+                    sh 'me/bin/python -m pip install --upgrade pip'
+                    sh 'me/bin/pip install -r requirements.txt'
                 }
             }
         }
