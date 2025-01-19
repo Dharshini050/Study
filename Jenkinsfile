@@ -44,33 +44,34 @@ pipeline {
         }
 
         stage('Build Backend') {
-            steps {
-                script {
-                    // Install Python and pip if not already installed
-                    sh '''
-                    apt-get update
-                    apt-get install -y python3 python3-pip
-                    '''
+    steps {
+        script {
+            // Install Python, pip, and python3-venv package
+            sh '''
+            apt-get update
+            apt-get install -y python3 python3-pip python3.11-venv
+            '''
 
-                    // Install virtual environment and activate it
-                    dir('study-management') {
-                        sh '''
-                        # Check if 'me' virtual environment exists, if not create it
-                        if [ ! -d "me" ]; then
-                            python3 -m venv me
-                        fi
+            // Install virtual environment and activate it
+            dir('study-management') {
+                sh '''
+                # Check if 'me' virtual environment exists, if not create it
+                if [ ! -d "me" ]; then
+                    python3 -m venv me
+                fi
 
-                        # Activate the virtual environment
-                        . me/bin/activate
+                # Activate the virtual environment
+                . me/bin/activate
 
-                        # Install required Python dependencies
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                        '''
-                    }
-                }
+                # Install required Python dependencies
+                pip install --upgrade pip
+                pip install -r requirements.txt
+                '''
             }
         }
+    }
+}
+
 
         stage('Run Tests') {
             steps {
