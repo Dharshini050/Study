@@ -43,51 +43,46 @@ pipeline {
             }
         }
 
-        stage('Build Backend') {
+          stage('Build Backend') {
             steps {
                 script {
-                    // Install Python, pip, and python3-venv package
+                    // Install Python and pip if not already installed
                     sh '''
                     apt-get update
                     apt-get install -y python3 python3-pip python3.11-venv
                     '''
-        
-                    // Install virtual environment and activate it
-                    dir('study-management') {
-                        sh '''
-                        # Check if 'me' virtual environment exists, if not, create it
-                        if [ ! -d "me" ]; then
-                            python3 -m venv me
-                        fi
-        
-                        # Activate the virtual environment using bash
-                        bash -c "source me/bin/activate"
-        
-                        # Install required Python dependencies
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                        '''
-                    }
+
+                    // Check if the virtual environment exists and create it if it doesn't
+                    sh '''
+                    if [ ! -d "me" ]; then
+                        python3 -m venv me
+                        echo "Virtual environment 'me' created successfully."
+                    else
+                        echo "Virtual environment 'me' already exists."
+                    fi
+                    '''
+
+                    // Activate the virtual environment from the correct path (Scripts/activate)
+                    sh 'source me/Scripts/activate'
+
+                    // Install required Python dependencies
+                    sh 'pip install --upgrade pip'
+                    sh 'pip install -r requirements.txt'
                 }
             }
         }
-
-
 
         stage('Run Tests') {
             steps {
                 script {
-                    // Run tests in the backend directory
                     dir('study-management') {
-                        sh '''
-                        bash -c "source me/bin/activate"
-                        pytest
-                        '''
+                        sh 'pytest'
                     }
                 }
             }
         }
 
+        
         stage('Deploy') {
             steps {
                 script {
