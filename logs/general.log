@@ -1,0 +1,43 @@
+INFO 2025-01-16 11:03:11,989 autoreload Watching for file changes with StatReloader
+INFO 2025-01-16 11:03:16,012 basehttp "GET /api/studies/ HTTP/1.1" 200 10360
+INFO 2025-01-16 11:03:18,832 views StudyListComponent initialized
+INFO 2025-01-16 11:03:18,834 basehttp "POST /log-frontend/ HTTP/1.1" 200 32
+INFO 2025-01-16 11:03:18,918 basehttp "GET /api/studies/ HTTP/1.1" 200 338
+INFO 2025-01-19 19:18:01,979 autoreload Watching for file changes with StatReloader
+WARNING 2025-01-19 19:18:22,556 basehttp "GET / HTTP/1.1" 404 2671
+WARNING 2025-01-19 19:18:22,633 basehttp "GET /favicon.ico HTTP/1.1" 404 2722
+INFO 2025-01-19 19:18:36,175 basehttp "GET /api/studies/ HTTP/1.1" 200 10360
+INFO 2025-01-19 19:18:36,220 basehttp "GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,223 basehttp "GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,227 basehttp "GET /static/rest_framework/css/prettify.css HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,233 basehttp "GET /static/rest_framework/js/csrf.js HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,236 basehttp "GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,237 basehttp "GET /static/rest_framework/css/default.css HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,238 basehttp "GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,239 basehttp "GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,239 basehttp "GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,243 basehttp "GET /static/rest_framework/js/default.js HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,244 basehttp "GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:36,253 basehttp "GET /static/rest_framework/img/grid.png HTTP/1.1" 304 0
+INFO 2025-01-19 19:18:52,776 basehttp "OPTIONS /log-frontend/ HTTP/1.1" 200 0
+INFO 2025-01-19 19:18:52,779 views StudyListComponent initialized
+INFO 2025-01-19 19:18:52,780 basehttp "POST /log-frontend/ HTTP/1.1" 200 32
+INFO 2025-01-19 19:18:52,786 basehttp "GET /api/studies/ HTTP/1.1" 200 338
+INFO 2025-01-19 19:18:55,228 views Navigating to the Edit Study page...
+INFO 2025-01-19 19:18:55,229 basehttp "POST /log-frontend/ HTTP/1.1" 200 32
+INFO 2025-01-19 19:18:55,237 views EditStudyComponent Initiated
+INFO 2025-01-19 19:18:55,241 basehttp "POST /log-frontend/ HTTP/1.1" 200 32
+INFO 2025-01-19 19:18:55,252 basehttp "GET /api/studies/ HTTP/1.1" 200 338
+INFO 2025-01-19 19:18:55,254 basehttp "GET /api/studies/2/ HTTP/1.1" 200 101
+INFO 2025-01-19 19:18:55,255 basehttp "GET /api/subjects/?study=2 HTTP/1.1" 200 137
+INFO 2025-01-19 19:18:55,276 views Loaded study 
+INFO 2025-01-19 19:18:55,277 basehttp "POST /log-frontend/ HTTP/1.1" 200 32
+INFO 2025-01-19 19:18:59,114 basehttp "OPTIONS /api/subjects/ HTTP/1.1" 200 0
+WARNING 2025-01-19 19:18:59,128 basehttp "POST /api/subjects/ HTTP/1.1" 400 129
+ERROR 2025-01-19 19:18:59,150 views Subject Field is empty 
+INFO 2025-01-19 19:18:59,152 basehttp "POST /log-frontend/ HTTP/1.1" 200 32
+INFO 2025-01-19 19:19:06,685 views Navigating to main page 
+INFO 2025-01-19 19:19:06,686 basehttp "POST /log-frontend/ HTTP/1.1" 200 32
+INFO 2025-01-19 19:19:06,706 views StudyListComponent initialized
+INFO 2025-01-19 19:19:06,711 basehttp "POST /log-frontend/ HTTP/1.1" 200 32
+INFO 2025-01-19 19:19:06,720 basehttp "GET /api/studies/ HTTP/1.1" 200 338
