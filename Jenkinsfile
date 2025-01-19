@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_REPO = 'https://github.com/Dharshini050/Frontend'  // Replace with your frontend repo URL
+        FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Replace with your frontend repo URL
         BACKEND_REPO = 'https://github.com/Dharshini050/Study'  // Replace with your backend repo URL
     }
 
