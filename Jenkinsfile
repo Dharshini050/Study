@@ -2,18 +2,18 @@ pipeline {
     agent any
 
     environment {
-        FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Replace with your frontend repo URL
-        BACKEND_REPO = 'https://github.com/Dharshini050/Study'  // Replace with your backend repo URL
+        FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Frontend repo URL
+        BACKEND_REPO = 'https://github.com/Dharshini050/Study'  // Backend repo URL
     }
 
     stages {
         stage('Clone Repositories') {
             steps {
                 script {
-                    // Clone the backend repository
+                    // Clone the backend repository into the 'study-management' folder
                     git url: BACKEND_REPO, branch: 'master'
 
-                    // Clone the frontend repository
+                    // Clone the frontend repository into the 'frontend' folder
                     dir('frontend') {
                         git url: FRONTEND_REPO, branch: 'master'
                     }
@@ -46,16 +46,27 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
-                    dir('study-management') {
                     // Install Python and pip if not already installed
                     sh '''
-                    source me/bin/activate
                     apt-get update
                     apt-get install -y python3 python3-pip
-            
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
                     '''
+
+                    // Install virtual environment and activate it
+                    dir('study-management') {
+                        sh '''
+                        # Check if 'me' virtual environment exists, if not create it
+                        if [ ! -d "me" ]; then
+                            python3 -m venv me
+                        fi
+
+                        # Activate the virtual environment
+                        . me/bin/activate
+
+                        # Install required Python dependencies
+                        pip install --upgrade pip
+                        pip install -r requirements.txt
+                        '''
                     }
                 }
             }
@@ -64,10 +75,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
+                    // Run tests in the backend directory
                     dir('study-management') {
-                        //Activate the virtual environment on Windows
-                        sh'''
-                        source me/bin/activate
+                        sh '''
+                        . me/bin/activate
                         pytest
                         '''
                     }
@@ -80,7 +91,7 @@ pipeline {
                 script {
                     // Example: Deploy your Dockerized application
                     echo 'Deploying the app'
-                    // Add deployment steps here
+                    // Add your deployment steps here (Docker, Kubernetes, etc.)
                 }
             }
         }
