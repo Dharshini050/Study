@@ -1,5 +1,5 @@
 pipeline {
-    agent any  // Run on any available agent (ensure this agent has Docker installed)
+    agent any
 
     environment {
         FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Frontend repo URL
@@ -7,6 +7,18 @@ pipeline {
     }
 
     stages {
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install system dependencies (Python, Node.js, etc.)
+                    sh '''
+                    apt-get update
+                    apt-get install -y python3 python3-pip python3.11-venv python3-dev curl
+                    '''
+                }
+            }
+        }
+
         stage('Clone Repositories') {
             steps {
                 script {
@@ -21,14 +33,18 @@ pipeline {
             }
         }
 
-        stage('Install Backend Dependencies') {
+        stage('Setup Virtual Environment') {
             steps {
                 script {
-                    sh 'ls -al'
-
-                    // Set up the backend's virtual environment and install dependencies
+                    // Install Python if it's not available
                     sh '''
-                    cd study_management
+                    apt-get update
+                    apt-get install -y python3 python3-pip python3.11-venv python3-dev
+                    '''
+
+                    // Navigate to the correct directory and set up the virtual environment
+                    sh '''
+                    cd study_management  # Correct directory
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install -r requirements.txt
@@ -40,9 +56,9 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 script {
-                    // Navigate to the frontend directory and build it
+                    // Navigate to the frontend directory and build
                     dir('frontend') {
-                        // Install Node.js and Angular CLI
+                        // Install Node.js if needed
                         sh 'curl -sL https://deb.nodesource.com/setup_18.x | bash -'
                         sh 'apt-get install -y nodejs'
 
@@ -62,9 +78,9 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
-                    // Build the backend (ensure all dependencies are installed)
+                    // Use the virtual environment for building the backend
                     sh '''
-                    cd study-management
+                    cd study_management
                     source venv/bin/activate
                     pip install -r requirements.txt
                     '''
@@ -76,7 +92,7 @@ pipeline {
             steps {
                 script {
                     // Run tests for the backend using the virtual environment
-                    dir('study-management') {
+                    dir('study_management') {
                         sh 'source venv/bin/activate && pytest'
                     }
                 }
@@ -86,12 +102,9 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Example: Deploy the Dockerized application
+                    // Add your deployment steps here (Docker, Kubernetes, etc.)
                     echo 'Deploying the app'
-
-                    // Example: Deploy with Docker (adjust accordingly)
-                    // docker build -t study-management .
-                    // docker run -d -p 8000:8000 study-management
+                    // Example: docker build -t study-management . && docker run -d -p 8000:8000 study-management
                 }
             }
         }
