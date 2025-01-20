@@ -10,10 +10,10 @@ pipeline {
             agent { label 'docker' }  // Run this stage on a node with Docker installed
             steps {
                 script {
-                    // Clone the backend repository into the 'study-management' folder
+                    // Clone the backend repository into the workspace
                     git url: BACKEND_REPO, branch: 'master'
 
-                    // Clone the frontend repository into the 'frontend' folder
+                    // Clone the frontend repository into the 'frontend' folder within the workspace
                     dir('frontend') {
                         git url: FRONTEND_REPO, branch: 'master'
                     }
@@ -28,7 +28,7 @@ pipeline {
                     docker.image('python:3.11').inside {
                         // Set up the virtual environment and install backend dependencies
                         sh '''
-                        cd study_management
+                        cd Study
                         python3 -m venv venv
                         source venv/bin/activate
                         pip install -r requirements.txt
@@ -49,7 +49,7 @@ pipeline {
                         // Install frontend dependencies
                         sh 'npm install'
 
-                        // Build the frontend
+                        // Build the frontend (Angular)
                         sh 'ng build --configuration production'
                     }
                 }
@@ -63,7 +63,7 @@ pipeline {
                     docker.image('python:3.11').inside {
                         // Use the virtual environment for building the backend
                         sh '''
-                        cd study_management
+                        cd Study
                         source venv/bin/activate
                         pip install -r requirements.txt
                         '''
@@ -75,10 +75,10 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Use the Python Docker image to run tests
+                    // Use the Python Docker image to run tests for the backend
                     docker.image('python:3.11').inside {
                         // Run tests for the backend using the virtual environment
-                        dir('study_management') {
+                        dir('Study') {
                             sh 'source venv/bin/activate && pytest'
                         }
                     }
@@ -91,6 +91,7 @@ pipeline {
                 script {
                     // Add your deployment steps here (Docker, Kubernetes, etc.)
                     echo 'Deploying the app'
+                    // For example, you could use Docker Compose or other deployment steps
                 }
             }
         }
