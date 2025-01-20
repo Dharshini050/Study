@@ -103,7 +103,10 @@ pipeline {
             }
         }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 400a68ee7bf21f50f135dd1f15c454917b8b4c3b
         stage('Clone Repositories') {
             steps {
                 script {
@@ -114,6 +117,19 @@ pipeline {
                     dir('frontend') {
                         git url: FRONTEND_REPO, branch: 'master'
                     }
+                }
+            }
+        }
+
+        stage('Setup Virtual Environment') {
+            steps {
+                script {
+                    // Create the virtual environment if it doesn't exist
+                    sh '''
+                    python3 -m venv venv
+                    bash -c "source venv/bin/activate && pip install --upgrade pip"
+                    bash -c "source venv/bin/activate && pip install -r requirements.txt"
+                    '''
                 }
             }
         }
@@ -143,8 +159,9 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
-                    // Install Python and pip if not already installed
+                    // Use the virtual environment from the 'Setup Virtual Environment' stage
                     sh '''
+<<<<<<< HEAD
                     apt-get update
                     apt-get install -y python3 python3-pip python3.11-venv
                     '''
@@ -157,6 +174,13 @@ pipeline {
         
                     // Verify that the required packages are installed
                     sh 'pip3 freeze'
+=======
+                    bash -c "source venv/bin/activate && pip install -r requirements.txt"
+                    '''
+        
+                    // Verify that the required packages are installed in the virtual environment
+                    sh 'bash -c "source venv/bin/activate && pip freeze"'
+>>>>>>> 400a68ee7bf21f50f135dd1f15c454917b8b4c3b
                 }
             }
         }
@@ -166,7 +190,8 @@ pipeline {
             steps {
                 script {
                     dir('study-management') {
-                        sh 'pytest'
+                        // Use the virtual environment for tests
+                        sh 'bash -c "source venv/bin/activate && pytest"'
                     }
                 }
             }
