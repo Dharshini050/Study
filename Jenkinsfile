@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        docker 'python:3.11'  // Use the Python 3.11 Docker image for the build
+    }
 
     environment {
         FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Frontend repo URL
@@ -7,18 +9,6 @@ pipeline {
     }
 
     stages {
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    // Install system dependencies (Python, Node.js, etc.) with sudo
-                    sh '''
-                    sudo apt-get update
-                    sudo apt-get install -y python3 python3-pip python3.11-venv python3-dev curl
-                    '''
-                }
-            }
-        }
-
         stage('Clone Repositories') {
             steps {
                 script {
@@ -33,15 +23,14 @@ pipeline {
             }
         }
 
-        stage('Setup Virtual Environment') {
+        stage('Install Backend Dependencies') {
             steps {
                 script {
-                    // Create the virtual environment if it doesn't exist and install backend dependencies
+                    // Set up the backend's virtual environment and install dependencies
                     sh '''
                     cd study-management
                     python3 -m venv venv
                     source venv/bin/activate
-                    pip install --upgrade pip
                     pip install -r requirements.txt
                     '''
                 }
@@ -51,16 +40,20 @@ pipeline {
         stage('Build Frontend') {
             steps {
                 script {
-                    // Navigate to the frontend directory and build
+                    // Navigate to the frontend directory and build it
                     dir('frontend') {
-                        // Install Node.js if needed
-                        sh '''
-                        curl -sL https://deb.nodesource.com/setup_18.x | bash -
-                        sudo apt-get install -y nodejs
-                        npm install -g @angular/cli
-                        npm install
-                        ng build --configuration production
-                        '''
+                        // Install Node.js and Angular CLI
+                        sh 'curl -sL https://deb.nodesource.com/setup_18.x | bash -'
+                        sh 'apt-get install -y nodejs'
+
+                        // Install Angular CLI globally
+                        sh 'npm install -g @angular/cli'
+
+                        // Install frontend dependencies
+                        sh 'npm install'
+
+                        // Build the frontend
+                        sh 'ng build --configuration production'
                     }
                 }
             }
@@ -69,7 +62,7 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
-                    // Use the virtual environment for building the backend
+                    // Build the backend (ensure all dependencies are installed)
                     sh '''
                     cd study-management
                     source venv/bin/activate
@@ -93,10 +86,10 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    // Add your deployment steps here (Docker, Kubernetes, etc.)
+                    // Example: Deploy the Dockerized application
                     echo 'Deploying the app'
 
-                    // Example: Deploy your Dockerized application (adjust accordingly)
+                    // Example: Deploy with Docker (adjust accordingly)
                     // docker build -t study-management .
                     // docker run -d -p 8000:8000 study-management
                 }
