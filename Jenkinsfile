@@ -1,13 +1,13 @@
 pipeline {
-    agent none  // No agent defined at the top level, define in individual stages
+    agent none  // Global agent definition
     environment {
-        FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Frontend repo URL
-        BACKEND_REPO = 'https://github.com/Dharshini050/Study'  // Backend repo URL
+        FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'
+        BACKEND_REPO = 'https://github.com/Dharshini050/Study'
     }
 
     stages {
         stage('Checkout Repositories') {
-            agent { docker { image 'python:3.11' } }  // Define docker agent for this stage
+            agent { label 'docker' }  // Run this stage on a node with Docker installed
             steps {
                 script {
                     // Clone the backend repository into the 'study-management' folder
@@ -22,7 +22,7 @@ pipeline {
         }
 
         stage('Setup Virtual Environment') {
-            agent { docker { image 'python:3.11' } }  // Use docker image for this stage
+            agent { docker { image 'python:3.11' } }  // Use Python Docker image for this stage
             steps {
                 script {
                     // Set up the virtual environment and install backend dependencies
@@ -37,7 +37,7 @@ pipeline {
         }
 
         stage('Build Frontend') {
-            agent { docker { image 'node:18' } }  // Use node Docker image for frontend build
+            agent { docker { image 'node:18' } }  // Use Node Docker image for frontend build
             steps {
                 script {
                     // Install Node.js if needed
@@ -53,7 +53,7 @@ pipeline {
         }
 
         stage('Build Backend') {
-            agent { docker { image 'python:3.11' } }  // Use docker image for this stage
+            agent { docker { image 'python:3.11' } }  // Use Python Docker image for this stage
             steps {
                 script {
                     // Use the virtual environment for building the backend
@@ -67,7 +67,7 @@ pipeline {
         }
 
         stage('Run Tests') {
-            agent { docker { image 'python:3.11' } }  // Use docker image for this stage
+            agent { docker { image 'python:3.11' } }  // Use Python Docker image for this stage
             steps {
                 script {
                     // Run tests for the backend using the virtual environment
