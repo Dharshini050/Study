@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.11'  // Use the Python 3.11 Docker image for the build
+            args '-u root'  // Run as root to avoid permission issues
+        }
+    }
 
     environment {
         FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Frontend repo URL
@@ -7,18 +12,6 @@ pipeline {
     }
 
     stages {
-        stage('Install Dependencies') {
-            steps {
-                script {
-                    // Install system dependencies (Python, Node.js, etc.)
-                    sh '''
-                    apt-get update
-                    apt-get install -y python3 python3-pip python3.11-venv python3-dev curl
-                    '''
-                }
-            }
-        }
-
         stage('Clone Repositories') {
             steps {
                 script {
@@ -36,15 +29,9 @@ pipeline {
         stage('Setup Virtual Environment') {
             steps {
                 script {
-                    // Install Python if it's not available
+                    // Set up the virtual environment and install backend dependencies
                     sh '''
-                    apt-get update
-                    apt-get install -y python3 python3-pip python3.11-venv python3-dev
-                    '''
-
-                    // Navigate to the correct directory and set up the virtual environment
-                    sh '''
-                    cd study_management  # Correct directory
+                    cd study_management
                     python3 -m venv venv
                     source venv/bin/activate
                     pip install -r requirements.txt
