@@ -24,7 +24,7 @@ pipeline {
                 script {
                     // Setup Python virtual environment for the backend
                     sh 'python3 -m venv venv'
-                    sh 'source venv/bin/activate'  // Activate the virtual environment
+                    sh '. venv/bin/activate'
                     sh 'pip install -r ${BACKEND_DIR}/requirements.txt'  // Install backend dependencies
                 }
             }
