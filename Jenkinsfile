@@ -1,99 +1,70 @@
 pipeline {
-    agent none  // Global agent definition
+    agent any
     environment {
         FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'
         BACKEND_REPO = 'https://github.com/Dharshini050/Study'
+        FRONTEND_DIR = 'frontend'
+        BACKEND_DIR = 'backend'
     }
-
     stages {
         stage('Checkout Repositories') {
-            agent { label 'docker' }  // Run this stage on a node with Docker installed
             steps {
                 script {
-                    // Clone the backend repository into the workspace
-                    git url: BACKEND_REPO, branch: 'master'
-
-                    // Clone the frontend repository into the 'frontend' folder within the workspace
-                    dir('frontend') {
-                        git url: FRONTEND_REPO, branch: 'master'
+                    // Checkout frontend and backend repositories using GitHub credentials
+                    withCredentials([usernamePassword(credentialsId: 'github-credentials', usernameVariable: 'GITHUB_USER', passwordVariable: 'GITHUB_TOKEN')]) {
+                        // Checkout frontend and backend repos
+                        git credentialsId: 'github-credentials', url: FRONTEND_REPO
+                        git credentialsId: 'github-credentials', url: BACKEND_REPO
                     }
                 }
             }
         }
-
-        stage('Setup Virtual Environment') {
+        stage('Setup Backend Virtual Environment') {
             steps {
                 script {
-                    // Use the Python Docker image to run the setup in a container
-                    docker.image('python:3.11').inside {
-                        // Set up the virtual environment and install backend dependencies
-                        sh '''
-                        cd Study
-                        python3 -m venv venv
-                        source venv/bin/activate
-                        pip install -r requirements.txt
-                        '''
-                    }
+                    // Setup Python virtual environment for the backend
+                    sh 'python3 -m venv venv'
+                    sh 'source venv/bin/activate'  // Activate the virtual environment
+                    sh 'pip install -r ${BACKEND_DIR}/requirements.txt'  // Install backend dependencies
                 }
             }
         }
-
         stage('Build Frontend') {
             steps {
                 script {
-                    // Use the Node Docker image to build the frontend
-                    docker.image('node:18').inside {
-                        // Install Node.js if needed
-                        sh 'npm install -g @angular/cli'
-
-                        // Install frontend dependencies
-                        sh 'npm install'
-
-                        // Build the frontend (Angular)
-                        sh 'ng build --configuration production'
-                    }
+                    // Install frontend dependencies and build the frontend (Angular)
+                    sh 'cd ${FRONTEND_DIR} && npm install'
+                    sh 'cd ${FRONTEND_DIR} && ng build --prod'  // Build the frontend for production
                 }
             }
         }
-
-        stage('Build Backend') {
+        stage('Run Backend Tests') {
             steps {
                 script {
-                    // Use the Python Docker image to build the backend
-                    docker.image('python:3.11').inside {
-                        // Use the virtual environment for building the backend
-                        sh '''
-                        cd Study
-                        source venv/bin/activate
-                        pip install -r requirements.txt
-                        '''
-                    }
+                    // Run backend tests (using pytest or your test framework of choice)
+                    sh 'cd ${BACKEND_DIR} && pytest tests'  // Adjust this if your test location is different
                 }
             }
         }
-
-        stage('Run Tests') {
-            steps {
-                script {
-                    // Use the Python Docker image to run tests for the backend
-                    docker.image('python:3.11').inside {
-                        // Run tests for the backend using the virtual environment
-                        dir('Study') {
-                            sh 'source venv/bin/activate && pytest'
-                        }
-                    }
-                }
-            }
-        }
-
         stage('Deploy') {
             steps {
                 script {
-                    // Add your deployment steps here (Docker, Kubernetes, etc.)
-                    echo 'Deploying the app'
-                    // For example, you could use Docker Compose or other deployment steps
+                    // Example deployment step using Docker (you can customize as per your deployment method)
+                    echo "Deploying Application..."
+
+                    // Assuming you are using Docker Compose
+                    sh 'docker-compose -f ${BACKEND_DIR}/docker-compose.yml up -d'  // Deploy backend with Docker
+                    sh 'docker-compose -f ${FRONTEND_DIR}/docker-compose.yml up -d'  // Deploy frontend with Docker (if needed)
                 }
             }
+        }
+    }
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline execution failed!'
         }
     }
 }
