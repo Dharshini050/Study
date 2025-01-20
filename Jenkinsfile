@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-        docker 'python:3.11'  // Use the Python 3.11 Docker image for the build
-    }
+    agent any  // Run on any available agent (ensure this agent has Docker installed)
 
     environment {
         FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Frontend repo URL
