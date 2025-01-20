@@ -24,6 +24,8 @@ pipeline {
         stage('Install Backend Dependencies') {
             steps {
                 script {
+                    sh 'ls -al'
+
                     // Set up the backend's virtual environment and install dependencies
                     sh '''
                     cd study-management
