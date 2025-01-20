@@ -22,57 +22,65 @@ pipeline {
         }
 
         stage('Setup Virtual Environment') {
-            agent { docker { image 'python:3.11' } }  // Use Python Docker image for this stage
             steps {
                 script {
-                    // Set up the virtual environment and install backend dependencies
-                    sh '''
-                    cd study_management
-                    python3 -m venv venv
-                    source venv/bin/activate
-                    pip install -r requirements.txt
-                    '''
+                    // Use the Python Docker image to run the setup in a container
+                    docker.image('python:3.11').inside {
+                        // Set up the virtual environment and install backend dependencies
+                        sh '''
+                        cd study_management
+                        python3 -m venv venv
+                        source venv/bin/activate
+                        pip install -r requirements.txt
+                        '''
+                    }
                 }
             }
         }
 
         stage('Build Frontend') {
-            agent { docker { image 'node:18' } }  // Use Node Docker image for frontend build
             steps {
                 script {
-                    // Install Node.js if needed
-                    sh 'npm install -g @angular/cli'
+                    // Use the Node Docker image to build the frontend
+                    docker.image('node:18').inside {
+                        // Install Node.js if needed
+                        sh 'npm install -g @angular/cli'
 
-                    // Install frontend dependencies
-                    sh 'npm install'
+                        // Install frontend dependencies
+                        sh 'npm install'
 
-                    // Build the frontend
-                    sh 'ng build --configuration production'
+                        // Build the frontend
+                        sh 'ng build --configuration production'
+                    }
                 }
             }
         }
 
         stage('Build Backend') {
-            agent { docker { image 'python:3.11' } }  // Use Python Docker image for this stage
             steps {
                 script {
-                    // Use the virtual environment for building the backend
-                    sh '''
-                    cd study_management
-                    source venv/bin/activate
-                    pip install -r requirements.txt
-                    '''
+                    // Use the Python Docker image to build the backend
+                    docker.image('python:3.11').inside {
+                        // Use the virtual environment for building the backend
+                        sh '''
+                        cd study_management
+                        source venv/bin/activate
+                        pip install -r requirements.txt
+                        '''
+                    }
                 }
             }
         }
 
         stage('Run Tests') {
-            agent { docker { image 'python:3.11' } }  // Use Python Docker image for this stage
             steps {
                 script {
-                    // Run tests for the backend using the virtual environment
-                    dir('study_management') {
-                        sh 'source venv/bin/activate && pytest'
+                    // Use the Python Docker image to run tests
+                    docker.image('python:3.11').inside {
+                        // Run tests for the backend using the virtual environment
+                        dir('study_management') {
+                            sh 'source venv/bin/activate && pytest'
+                        }
                     }
                 }
             }
