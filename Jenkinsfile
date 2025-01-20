@@ -1,18 +1,13 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11'  // Use the Python 3.11 Docker image for the build
-            args '-u root'  // Run as root to avoid permission issues
-        }
-    }
-
+    agent none  // No agent defined at the top level, define in individual stages
     environment {
         FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Frontend repo URL
         BACKEND_REPO = 'https://github.com/Dharshini050/Study'  // Backend repo URL
     }
 
     stages {
-        stage('Clone Repositories') {
+        stage('Checkout Repositories') {
+            agent { docker { image 'python:3.11' } }  // Define docker agent for this stage
             steps {
                 script {
                     // Clone the backend repository into the 'study-management' folder
@@ -27,6 +22,7 @@ pipeline {
         }
 
         stage('Setup Virtual Environment') {
+            agent { docker { image 'python:3.11' } }  // Use docker image for this stage
             steps {
                 script {
                     // Set up the virtual environment and install backend dependencies
@@ -41,28 +37,23 @@ pipeline {
         }
 
         stage('Build Frontend') {
+            agent { docker { image 'node:18' } }  // Use node Docker image for frontend build
             steps {
                 script {
-                    // Navigate to the frontend directory and build
-                    dir('frontend') {
-                        // Install Node.js if needed
-                        sh 'curl -sL https://deb.nodesource.com/setup_18.x | bash -'
-                        sh 'apt-get install -y nodejs'
+                    // Install Node.js if needed
+                    sh 'npm install -g @angular/cli'
 
-                        // Install Angular CLI globally
-                        sh 'npm install -g @angular/cli'
+                    // Install frontend dependencies
+                    sh 'npm install'
 
-                        // Install frontend dependencies
-                        sh 'npm install'
-
-                        // Build the frontend
-                        sh 'ng build --configuration production'
-                    }
+                    // Build the frontend
+                    sh 'ng build --configuration production'
                 }
             }
         }
 
         stage('Build Backend') {
+            agent { docker { image 'python:3.11' } }  // Use docker image for this stage
             steps {
                 script {
                     // Use the virtual environment for building the backend
@@ -76,6 +67,7 @@ pipeline {
         }
 
         stage('Run Tests') {
+            agent { docker { image 'python:3.11' } }  // Use docker image for this stage
             steps {
                 script {
                     // Run tests for the backend using the virtual environment
@@ -91,7 +83,6 @@ pipeline {
                 script {
                     // Add your deployment steps here (Docker, Kubernetes, etc.)
                     echo 'Deploying the app'
-                    // Example: docker build -t study-management . && docker run -d -p 8000:8000 study-management
                 }
             }
         }
