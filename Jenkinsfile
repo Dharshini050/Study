@@ -24,11 +24,13 @@ pipeline {
                 script {
                     // Setup Python virtual environment for the backend
                     sh 'python3 -m venv venv'
-                    sh '. venv/bin/activate'
-                    sh 'pip install -r ${BACKEND_DIR}/requirements.txt'  // Install backend dependencies
+                    // Activate the virtual environment
+                    sh '. venv/bin/activate'  // Activate the virtual environment
+                    sh 'pip3 install -r ${BACKEND_DIR}/requirements.txt'  // Install backend dependencies
                 }
             }
         }
+
         stage('Build Frontend') {
             steps {
                 script {
