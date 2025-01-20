@@ -1,87 +1,3 @@
-// pipeline {
-//     agent any
-
-//     environment {
-//         FRONTEND_REPO = 'https://github.com/Dharshini050/study-management-fronten'  // Replace with your frontend repo URL
-//         BACKEND_REPO = 'https://github.com/Dharshini050/Study'  // Replace with your backend repo URL
-//     }
-
-//     stages {
-//         stage('Clone Repositories') {
-//             steps {
-//                 script {
-//                     // Clone the backend repository
-//                     git url: BACKEND_REPO, branch: 'master'
-
-//                     // Clone the frontend repository
-//                     dir('frontend') {
-//                         git url: FRONTEND_REPO, branch: 'master'
-//                     }
-//                 }
-//             }
-//         }
-
-//         stage('Build Frontend') {
-//             steps {
-//                 script {
-//                     // Navigate to the frontend directory and build
-//                     dir('frontend') {
-//                         // Install Node.js if needed
-//                         sh 'curl -sL https://deb.nodesource.com/setup_18.x | bash -'
-//                         sh 'apt-get install -y nodejs'
-
-//                         // Install Angular CLI globally
-//                         sh 'npm install -g @angular/cli'
-
-//                         // Install frontend dependencies
-//                         sh 'npm install'
-
-//                         // Build the frontend
-//                         sh 'ng build --configuration production'
-//                     }
-//                 }
-//             }
-//         }
-
-//         stage('Build Backend') {
-//             steps {
-//                 script {
-//                     // Install Python and pip if not already installed
-//                     sh '''
-//                     apt-get update
-//                     apt-get install -y python3 python3-pip
-//                     '''
-//                     // Build the backend
-//                     dir('study-management') {
-//                         sh 'pip install -r requirements.txt'
-//                     }
-//                 }
-//             }
-//         }
-
-//         stage('Run Tests') {
-//             steps {
-//                 script {
-//                     dir('study-management') {
-//                         sh 'pytest'
-//                     }
-//                 }
-//             }
-//         }
-
-//         stage('Deploy') {
-//             steps {
-//                 script {
-//                     // Example: Deploy your Dockerized application
-//                     echo 'Deploying the app'
-//                     // Add deployment steps here
-//                 }
-//             }
-//         }
-//     }
-// }
-
-
 pipeline {
     agent any
 
@@ -94,19 +10,15 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Install Python dependencies and virtual environment tools
+                    // Install system dependencies (Python, Node.js, etc.) with sudo
                     sh '''
-                    apt-get update
-                    apt-get install -y python3 python3-pip python3.11-venv python3-dev
+                    sudo apt-get update
+                    sudo apt-get install -y python3 python3-pip python3.11-venv python3-dev curl
                     '''
                 }
             }
         }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 400a68ee7bf21f50f135dd1f15c454917b8b4c3b
         stage('Clone Repositories') {
             steps {
                 script {
@@ -124,11 +36,13 @@ pipeline {
         stage('Setup Virtual Environment') {
             steps {
                 script {
-                    // Create the virtual environment if it doesn't exist
+                    // Create the virtual environment if it doesn't exist and install backend dependencies
                     sh '''
+                    cd study-management
                     python3 -m venv venv
-                    bash -c "source venv/bin/activate && pip install --upgrade pip"
-                    bash -c "source venv/bin/activate && pip install -r requirements.txt"
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
                     '''
                 }
             }
@@ -140,17 +54,13 @@ pipeline {
                     // Navigate to the frontend directory and build
                     dir('frontend') {
                         // Install Node.js if needed
-                        sh 'curl -sL https://deb.nodesource.com/setup_18.x | bash -'
-                        sh 'apt-get install -y nodejs'
-
-                        // Install Angular CLI globally
-                        sh 'npm install -g @angular/cli'
-
-                        // Install frontend dependencies
-                        sh 'npm install'
-
-                        // Build the frontend
-                        sh 'ng build --configuration production'
+                        sh '''
+                        curl -sL https://deb.nodesource.com/setup_18.x | bash -
+                        sudo apt-get install -y nodejs
+                        npm install -g @angular/cli
+                        npm install
+                        ng build --configuration production
+                        '''
                     }
                 }
             }
@@ -159,51 +69,36 @@ pipeline {
         stage('Build Backend') {
             steps {
                 script {
-                    // Use the virtual environment from the 'Setup Virtual Environment' stage
+                    // Use the virtual environment for building the backend
                     sh '''
-<<<<<<< HEAD
-                    apt-get update
-                    apt-get install -y python3 python3-pip python3.11-venv
+                    cd study-management
+                    source venv/bin/activate
+                    pip install -r requirements.txt
                     '''
-        
-                    // Upgrade pip globally
-                    sh 'pip3 install --upgrade pip'
-        
-                    // Install dependencies globally from requirements.txt
-                    sh 'pip3 install -r requirements.txt'
-        
-                    // Verify that the required packages are installed
-                    sh 'pip3 freeze'
-=======
-                    bash -c "source venv/bin/activate && pip install -r requirements.txt"
-                    '''
-        
-                    // Verify that the required packages are installed in the virtual environment
-                    sh 'bash -c "source venv/bin/activate && pip freeze"'
->>>>>>> 400a68ee7bf21f50f135dd1f15c454917b8b4c3b
                 }
             }
         }
 
-
         stage('Run Tests') {
             steps {
                 script {
+                    // Run tests for the backend using the virtual environment
                     dir('study-management') {
-                        // Use the virtual environment for tests
-                        sh 'bash -c "source venv/bin/activate && pytest"'
+                        sh 'source venv/bin/activate && pytest'
                     }
                 }
             }
         }
 
-        
         stage('Deploy') {
             steps {
                 script {
-                    // Example: Deploy your Dockerized application
-                    echo 'Deploying the app'
                     // Add your deployment steps here (Docker, Kubernetes, etc.)
+                    echo 'Deploying the app'
+
+                    // Example: Deploy your Dockerized application (adjust accordingly)
+                    // docker build -t study-management .
+                    // docker run -d -p 8000:8000 study-management
                 }
             }
         }
